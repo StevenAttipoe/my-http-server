@@ -48,9 +48,16 @@ int main(int argc, char **argv) {
   
   std::cout << "Waiting for a client to connect...\n";
   
-  accept(server_fd, (struct sockaddr *) &client_addr, (socklen_t *) &client_addr_len);
-  std::cout << "Client connected\n";
+  int client_socket = accept(server_fd, (struct sockaddr *) &client_addr, (socklen_t *) &client_addr_len);
+  if (client_socket < 0) {
+    std::cerr << "Failed to connect to client";
+    return 1;
+  }
   
+  std::cout << "Client connected\n";
+  std::string response = "HTTP/1.1 200 OK\r\n\r\n";
+  send(client_socket, response.c_str(), response.length(), 0);
+
   close(server_fd);
 
   return 0;
